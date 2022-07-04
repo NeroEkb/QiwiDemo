@@ -5,22 +5,16 @@ using System.Text.Json;
 using System.Collections.Generic;
 
 string token = ""; // Здесь ввоится токен
-List<Wallet> WalletList = new List<Wallet>(); // Создаём Лист аккаунтов
-WalletList.Add(new Wallet(token)); // Добавляем наш кошелёк
-foreach(Wallet wallet in WalletList) // Проходим по каждому кошельку в Листе
+List<Account> AccountList = new List<Account>(); // Создаём Лист аккаунтов
+AccountList.Add(await Account.CreateAccount(token)); // Добавляем наш кошелёк
+foreach(Account account in AccountList) // Проходим по каждому кошельку в Листе
 {
-    Request requester = new Request(wallet); // Создаём запрос
-    var kek = JsonConvert.DeserializeObject<dynamic>( await requester.MakeRequestForNumber(wallet)); // Получаем в переменную результат ответа от сервера
-    wallet.Number = kek.contractInfo.contractId.ToString(); // переносим данные (номер телефона) из результата в экземпляр класса 
-    var k = JsonConvert.DeserializeObject<dynamic>(await requester.MakeRequestForBalance(wallet)); // Делаем запрос и получаем информацию о количестве и суммах кошельков
-
-    foreach (var account in k.accounts) // для каждого валютного кошелька переносим значения (валюта, сумма) в экземпляр класса 
+    Console.WriteLine(AccountList[0].Number);
+    foreach(KeyValuePair<int, float> wallet in AccountList[0].Wallet)
     {
-       wallet.Currency.Add(account.balance.currency, account.balance.amount);
+        Console.WriteLine("currency = {0}, amount = {1}", wallet.Key, wallet.Value);
     }
-
-    Console.WriteLine(wallet.Currency);
 
 }
 
-Console.WriteLine(WalletList[0].Number);
+
