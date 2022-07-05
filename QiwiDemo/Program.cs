@@ -8,7 +8,6 @@ string token = ""; // Здесь ввоится токен
 
 List<Account> AccountList = new List<Account>(); // Создаём Лист аккаунтов
 Console.WriteLine("Input token and press 'Enter', when done press 'Enter' again");
-string token;
 while(true)
 {
     token = Console.ReadLine();
@@ -32,5 +31,3 @@ foreach(Account account in AccountList) // Проходим по каждому 
     }
 
 }
-
-Console.WriteLine(WalletList[0].Number);
