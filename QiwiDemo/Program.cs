@@ -1,25 +1,35 @@
-﻿using QiwiDemo;
+using QiwiDemo;
 using RestSharp;
 using Newtonsoft.Json;
 using System.Text.Json;
 using System.Collections.Generic;
 
 string token = ""; // Здесь ввоится токен
-List<Wallet> WalletList = new List<Wallet>(); // Создаём Лист аккаунтов
-WalletList.Add(new Wallet(token)); // Добавляем наш кошелёк
-foreach(Wallet wallet in WalletList) // Проходим по каждому кошельку в Листе
+
+List<Account> AccountList = new List<Account>(); // Создаём Лист аккаунтов
+Console.WriteLine("Input token and press 'Enter', when done press 'Enter' again");
+string token;
+while(true)
 {
-    Request requester = new Request(wallet); // Создаём запрос
-    var kek = JsonConvert.DeserializeObject<dynamic>( await requester.MakeRequestForNumber(wallet)); // Получаем в переменную результат ответа от сервера
-    wallet.Number = kek.contractInfo.contractId.ToString(); // переносим данные (номер телефона) из результата в экземпляр класса 
-    var k = JsonConvert.DeserializeObject<dynamic>(await requester.MakeRequestForBalance(wallet)); // Делаем запрос и получаем информацию о количестве и суммах кошельков
-
-    foreach (var account in k.accounts) // для каждого валютного кошелька переносим значения (валюта, сумма) в экземпляр класса 
+    token = Console.ReadLine();
+    if (token.Length == 0) { Console.WriteLine("Empty string"); break; }
+    else
     {
-       wallet.Currency.Add(account.balance.currency, account.balance.amount);
+        AccountList.Add(await Account.CreateAccount(token));
     }
+    
 
-    Console.WriteLine(wallet.Currency);
+}
+
+
+foreach(Account account in AccountList) // Проходим по каждому кошельку в Листе
+{
+    Console.WriteLine("Nickname = {0}, Number = {1}", account.GetNumber(account), account.GetNickname(account));
+    Dictionary<int, float> wallets = account.GetWallets(account);
+    foreach(KeyValuePair<int, float> wallet in wallets)
+    {
+        Console.WriteLine("currency = {0}, amount = {1}", wallet.Key, wallet.Value);
+    }
 
 }
 
